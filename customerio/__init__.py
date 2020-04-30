@@ -70,6 +70,10 @@ class CustomerIO(object):
         '''Generates a device API path'''
         return '{base}/customers/{id}/devices'.format(base=self.base_url, id=customer_id)
 
+    def get_push_event_query_string(self):
+        '''Generates a device API path'''
+        return '{base}/push/events'.format(base=self.base_url.strip(self.url_prefix))
+
     def send_request(self, method, url, data):
         '''Dispatches the request and returns a response'''
 
@@ -100,6 +104,16 @@ Last caught exception -- {klass}: {message}
         post_data = {
             'name': name,
             'data': data,
+        }
+        self.send_request('POST', url, post_data)
+
+    def track_push_open(self, cio_delivery_id, cio_device_id):
+        '''Track push notification open for a delivery'''
+        url = self.get_push_event_query_string()
+        post_data = {
+            'delivery_id': cio_delivery_id,
+            'event': "opened",
+            'device_id': cio_device_id
         }
         self.send_request('POST', url, post_data)
 
